@@ -12,6 +12,8 @@
 void vm_start(struct uc_struct*);
 void tcg_exec_init(struct uc_struct *uc, unsigned long tb_size);
 
+int afl_forkserver_start(struct uc_struct *uc);
+
 // return true on success, false on failure
 static inline bool cpu_physical_mem_read(AddressSpace *as, hwaddr addr,
                                             uint8_t *buf, int len)
@@ -109,5 +111,21 @@ static inline void uc_common_init(struct uc_struct* uc)
 
     if (!uc->release)
         uc->release = release_common;
+
+#ifdef UNICORN_AFL
+    uc->afl_data_ptr = NULL;
+    uc->afl_area_ptr = 0;
+    uc->exit_count = 0;
+    uc->exits = NULL;
+    uc->afl_forkserver_start = afl_forkserver_start;
+    uc->afl_child_pipe[0] = 0;
+    uc->afl_child_pipe[1] = 0;
+    uc->afl_parent_pipe[0] = 0;
+    uc->afl_parent_pipe[1] = 0;
+    uc->afl_child_request_next = NULL;  // This callback is only set if inside child.
+    uc->afl_testcase_ptr = NULL;
+    uc->afl_testcase_size_p = NULL;
+#endif
+
 }
 #endif

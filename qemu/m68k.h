@@ -4,6 +4,11 @@
 #ifndef UNICORN_ARCH_POSTFIX
 #define UNICORN_ARCH_POSTFIX _m68k
 #endif
+#define afl_forkserver_start afl_forkserver_start_m68k
+#define gen_helper_afl_maybe_log gen_helper_afl_maybe_log_m68k
+#define gen_helper_afl_compcov_log16 gen_helper_afl_compcov_log16_m68k
+#define gen_helper_afl_compcov_log32 gen_helper_afl_compcov_log32_m68k
+#define gen_helper_afl_compcov_log64 gen_helper_afl_compcov_log64_m68k
 #define use_idiv_instructions use_idiv_instructions_m68k
 #define arm_arch arm_arch_m68k
 #define tb_target_set_jmp_target tb_target_set_jmp_target_m68k

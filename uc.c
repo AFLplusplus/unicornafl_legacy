@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #endif
+#include <stdint.h>
 
 #include <time.h>   // nanosleep
 #include <string.h>
@@ -396,6 +397,13 @@ uc_err uc_close(uc_engine *uc)
     }
     list_clear(&uc->saved_contexts);
 
+#if defined(UNICORN_AFL)
+    if (uc->exits) {
+        free(uc->exits);
+        uc->exits = NULL;
+    }
+#endif
+
     // finally, free uc itself.
     memset(uc, 0, sizeof(*uc));
     free(uc);
@@ -635,6 +643,10 @@ uc_err uc_emu_start(uc_engine* uc, uint64_t begin, uint64_t until, uint64_t time
     uc->size_recur_mem = 0;
     uc->timed_out = false;
     uc->first_tb = true;
+
+#if defined(UNICORN_AFL)
+    uc->exit_count = 0;
+#endif
 
     switch(uc->arch) {
         default:
